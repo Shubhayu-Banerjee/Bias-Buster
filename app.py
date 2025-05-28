@@ -7,8 +7,7 @@ import re
 
 # --- Configuration ---
 # IMPORTANT: Replace with your actual Groq API Key
-# For security, in a real deployment, you'd load this from environment variables.
-GROQ_API_KEY = "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"  # Your key
+GROQ_API_KEY = "Your Key"
 
 app = Flask(__name__)
 
