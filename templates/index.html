@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bias Buster - Expose the slant. Elevate your stance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right bottom, #edf2f7, #e0f2f7); /* Soft gradient background */
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 2rem 0;
+        }
+        .container {
+            max-width: 1200px;
+            width: 95%;
+            margin: 0 auto;
+            padding: 2.5rem;
+            background-color: #ffffff;
+            border-radius: 20px; /* More rounded corners */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Softer, larger shadow */
+            backdrop-filter: blur(5px); /* Subtle blur effect */
+            border: 1px solid rgba(255, 255, 255, 0.3); /* Light border */
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .header h1 {
+            font-size: 2.8rem; /* Larger heading */
+            font-weight: 700;
+            color: #1a202c;
+            background: linear-gradient(to right, #6366f1, #8b5cf6); /* Gradient for title */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+        .header p {
+            color: #6b7280;
+            margin-top: 0.75rem;
+            font-size: 1.1rem;
+        }
+        .mode-toggle-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1.25rem;
+            margin-bottom: 3rem; /* More space */
+            background-color: #f9fafb;
+            padding: 0.75rem;
+            border-radius: 12px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .mode-toggle-buttons button {
+            padding: 0.85rem 2rem; /* Slightly larger buttons */
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none; /* Remove default border */
+            background-color: transparent;
+            color: #6b7280;
+            font-size: 1.05rem;
+        }
+        .mode-toggle-buttons button.active {
+            background: linear-gradient(to right, #6366f1, #8b5cf6); /* Gradient for active button */
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
+        }
+        .mode-toggle-buttons button:hover:not(.active) {
+            background-color: #eff6ff; /* Lighter hover for inactive */
+            color: #4f46e5;
+        }
+
+        .form-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem; /* More space between form elements */
+            margin-bottom: 2.5rem;
+            align-items: center;
+        }
+        .form-section input[type="text"],
+        .form-section textarea {
+            width: 100%;
+            padding: 1rem 1.25rem; /* Larger padding */
+            border: 1px solid #e0e0e0; /* Softer border */
+            border-radius: 12px; /* More rounded */
+            font-size: 1.05rem;
+            min-width: 300px; /* Ensure readability */
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .form-section input[type="text"]:focus,
+        .form-section textarea:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2); /* Focus ring */
+            outline: none;
+        }
+        .form-section textarea {
+            min-height: 180px; /* Make textarea larger */
+            resize: vertical; /* Allow vertical resizing */
+        }
+        .form-section button {
+            background: linear-gradient(to right, #6366f1, #8b5cf6); /* Gradient button */
+            color: white;
+            padding: 1rem 2.5rem; /* Larger button */
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            width: fit-content;
+            font-size: 1.1rem;
+            border: none;
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+        }
+        .form-section button:hover {
+            background: linear-gradient(to right, #4f46e5, #7c3aed);
+            box-shadow: 0 7px 20px rgba(79, 70, 229, 0.4);
+            transform: translateY(-2px);
+        }
+        .error-message {
+            background-color: #ffe0e0; /* Softer error background */
+            color: #c02d2d; /* Darker red for text */
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid #ffb0b0;
+            font-weight: 500;
+            text-align: center;
+        }
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2.5rem; /* More space between result boxes */
+        }
+        @media (min-width: 768px) {
+            .results-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        .result-box {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 16px; /* More rounded */
+            border: 1px solid #f0f0f0; /* Lighter border */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); /* Softer shadow */
+            overflow-y: auto;
+            max-height: 650px; /* Slightly taller */
+            display: flex;
+            flex-direction: column;
+        }
+        .result-box h3 {
+            font-size: 1.6rem; /* Larger heading */
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #333;
+            border-bottom: 3px solid #e0e0e0; /* Thicker, softer border */
+            padding-bottom: 0.75rem;
+        }
+        .extracted-text-box {
+            position: relative;
+            overflow-y: auto;
+            max-height: 550px; /* Adjusted height */
+            padding-right: 15px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 0.95rem;
+            color: #4a5568;
+            flex-grow: 1; /* Allow text box to grow */
+        }
+        /* Scrollbar styling for extracted-text-box */
+        .extracted-text-box::-webkit-scrollbar {
+            width: 8px;
+        }
+        .extracted-text-box::-webkit-scrollbar-track {
+            background: #f0f0f0;
+            border-radius: 10px;
+        }
+        .extracted-text-box::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 10px;
+        }
+        .extracted-text-box::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+
+        .highlight {
+            position: relative;
+            cursor: help;
+            border-bottom: 2px dashed; /* Dashed border for highlight */
+            display: inline-block;
+            transition: background-color 0.2s ease;
+        }
+
+        /* Severity-based highlight colors with more subtle tones */
+        .highlight-minor {
+            background-color: #fefcbf; /* Soft yellow */
+            border-color: #f6e05e;
+        }
+        .highlight-moderate {
+            background-color: #fed7aa; /* Soft orange */
+            border-color: #ed8936;
+        }
+        .highlight-major {
+            background-color: #feb2b2; /* Soft red */
+            border-color: #fc8181;
+        }
+
+        .tooltip-content {
+            visibility: hidden;
+            background-color: #333;
+            color: #fff;
+            text-align: left;
+            border-radius: 8px; /* More rounded */
+            padding: 12px; /* More padding */
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            width: 320px; /* Slightly wider tooltip */
+            box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            pointer-events: none; /* Allow clicks through tooltip to elements below */
+        }
+
+        .highlight:hover .tooltip-content {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Tooltip arrow */
+        .tooltip-content::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -8px; /* Larger arrow */
+            border-width: 8px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+
+        .pattern-list {
+            list-style: none;
+            padding: 0;
+        }
+        .pattern-item {
+            background-color: #fcfcfc; /* Very light background */
+            border: 1px solid #e5e5e5; /* Lighter border */
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .pattern-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .pattern-item h4 {
+            font-weight: 700; /* Bolder */
+            color: #1f2937;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+        .pattern-item p {
+            margin-bottom: 0.4rem;
+            font-size: 0.95rem;
+            color: #4a5568;
+        }
+        .pattern-item .severity {
+            font-weight: 700;
+            padding: 0.3rem 0.7rem; /* Slightly larger padding */
+            border-radius: 6px;
+            display: inline-block;
+            margin-top: 0.8rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        /* Severity colors for pattern list, distinct from highlight colors */
+        .severity-minor { background-color: #d1fae5; color: #065f46; } /* Light green */
+        .severity-moderate { background-color: #fef3c7; color: #92400e; } /* Medium yellow */
+        .severity-major { background-color: #fee2e2; color: #991b1b; } /* Light red */
+
+        .loading-indicator {
+            display: none;
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 1.2rem;
+            color: #6366f1;
+            margin-top: 2rem;
+            font-weight: 600;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+        .loading-indicator.active {
+            display: block;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.03); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .overall-summary-box {
+            background: linear-gradient(to right, #e0f7fa, #e3f2fd); /* Light blue gradient */
+            padding: 1.75rem;
+            border-radius: 16px;
+            border: 1px solid #b2ebf2;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        .overall-summary-box h4 {
+            font-weight: 700;
+            color: #00796b; /* Darker teal */
+            margin-bottom: 0.75rem;
+            font-size: 1.3rem;
+        }
+        .overall-summary-box ul {
+            list-style: disc;
+            margin-left: 1.5rem;
+            color: #37474f;
+            font-size: 1rem;
+        }
+        .overall-summary-box p {
+            color: #37474f;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .overall-sentiment {
+            font-weight: 700;
+            padding: 0.4rem 1rem;
+            border-radius: 8px;
+            display: inline-block;
+            margin-top: 0.7rem;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .sentiment-read-freely { background-color: #4CAF50; color: white; } /* Green */
+        .sentiment-read-carefully { background-color: #FFC107; color: #333; } /* Amber */
+        .sentiment-major-issues { background-color: #F44336; color: white; } /* Red */
+
+        .compare-section .form-section {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            width: 100%;
+        }
+        @media (min-width: 768px) {
+            .compare-section .form-section {
+                grid-template-columns: 1fr 1fr;
+            }
+            .compare-section .form-controls {
+                grid-column: 1 / -1;
+                display: flex;
+                justify-content: center;
+                margin-top: 1rem;
+            }
+        }
+        .compare-section .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem; /* Space within input group */
+            padding: 1.5rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 16px;
+            background-color: #fcfcfc;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        .compare-section .input-group h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 0.75rem;
+            text-align: center;
+        }
+        .compare-results-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+        }
+        @media (min-width: 768px) {
+            .compare-results-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        .article-compare-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .article-compare-column .result-box {
+            flex: 1; /* Allow result boxes to fill vertical space */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Bias Buster</h1>
+            <p>Analyze articles for misinformation patterns, bias, and tone. Compare up to two articles side-by-side!</p>
+        </header>
+
+        <div class="mode-toggle-buttons">
+            <button id="singleModeBtn" class="active">Single Article Analysis</button>
+            <button id="compareModeBtn">Compare Articles</button>
+        </div>
+
+        <section id="singleArticleSection">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-6 text-center">Analyze a Single Article</h2>
+            <form id="analysisForm" class="form-section">
+                <input type="text" id="articleUrl" name="article_url" placeholder="Enter article URL (e.g., https://example.com/news)">
+                <p class="text-gray-500 font-medium">— OR —</p>
+                <textarea id="articleText" name="article_text" placeholder="Paste article text here..."></textarea>
+                <button type="submit">Analyze Article</button>
+            </form>
+        </section>
+
+        <section id="compareArticlesSection" class="hidden compare-section">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-6 text-center">Compare Two Articles</h2>
+            <form id="compareForm" class="form-section">
+                <div class="input-group">
+                    <h3>Article 1</h3>
+                    <input type="text" id="article1Url" name="article1_url" placeholder="Enter URL for Article 1">
+                    <p class="text-gray-500 font-medium text-center">— OR —</p>
+                    <textarea id="article1Text" name="article1_text" placeholder="Paste text for Article 1..."></textarea>
+                </div>
+                <div class="input-group">
+                    <h3>Article 2</h3>
+                    <input type="text" id="article2Url" name="article2_url" placeholder="Enter URL for Article 2">
+                    <p class="text-gray-500 font-medium text-center">— OR —</p>
+                    <textarea id="article2Text" name="article2_text" placeholder="Paste text for Article 2..."></textarea>
+                </div>
+                <div class="form-controls">
+                    <button type="submit">Compare Articles</button>
+                </div>
+            </form>
+        </section>
+
+        <div id="loadingIndicator" class="loading-indicator">
+            Analyzing content... Please wait.
+        </div>
+
+        <div id="errorMessage" class="error-message hidden"></div>
+
+        <div id="singleResultsDisplay" class="results-grid hidden">
+            <div class="result-box col-span-full">
+                <h3>Overall Analysis</h3>
+                <div id="overallSummary" class="overall-summary-box"></div>
+            </div>
+
+            <div class="result-box">
+                <h3>Extracted Article Text</h3>
+                <div id="extractedText" class="extracted-text-box"></div>
+            </div>
+
+            <div class="result-box">
+                <h3>Detected Misinformation Patterns</h3>
+                <ul id="patternsList" class="pattern-list"></ul>
+            </div>
+
+            <div class="result-box col-span-full">
+                <h3>Original Article Page (if URL provided)</h3>
+                <iframe id="originalHtmlIframe" style="width: 100%; height: 550px; border: 1px solid #e5e7eb; border-radius: 12px; background-color: #f8f8f8;"></iframe>
+            </div>
+        </div>
+
+        <div id="compareResultsDisplay" class="compare-results-container hidden">
+            <div class="article-compare-column">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4 text-center">Article 1 Analysis</h2>
+                <div class="result-box overall-summary-box">
+                    <h3>Overall Analysis</h3>
+                    <div id="overallSummary1"></div>
+                </div>
+                <div class="result-box">
+                    <h3>Extracted Text</h3>
+                    <div id="extractedText1" class="extracted-text-box"></div>
+                </div>
+                <div class="result-box">
+                    <h3>Detected Patterns</h3>
+                    <ul id="patternsList1" class="pattern-list"></ul>
+                </div>
+            </div>
+
+            <div class="article-compare-column">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4 text-center">Article 2 Analysis</h2>
+                <div class="result-box overall-summary-box">
+                    <h3>Overall Analysis</h3>
+                    <div id="overallSummary2"></div>
+                </div>
+                <div class="result-box">
+                    <h3>Extracted Text</h3>
+                    <div id="extractedText2" class="extracted-text-box"></div>
+                </div>
+                <div class="result-box">
+                    <h3>Detected Patterns</h3>
+                    <ul id="patternsList2" class="pattern-list"></ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const singleModeBtn = document.getElementById('singleModeBtn');
+        const compareModeBtn = document.getElementById('compareModeBtn');
+        const singleArticleSection = document.getElementById('singleArticleSection');
+        const compareArticlesSection = document.getElementById('compareArticlesSection');
+        const analysisForm = document.getElementById('analysisForm');
+        const compareForm = document.getElementById('compareForm');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const errorMessageDiv = document.getElementById('errorMessage');
+        const singleResultsDisplay = document.getElementById('singleResultsDisplay');
+        const compareResultsDisplay = document.getElementById('compareResultsDisplay');
+
+        let currentMode = 'single'; // 'single' or 'compare'
+
+        // Function to show/hide sections based on mode
+        function setMode(mode) {
+            currentMode = mode;
+            if (mode === 'single') {
+                singleArticleSection.classList.remove('hidden');
+                compareArticlesSection.classList.add('hidden');
+                singleModeBtn.classList.add('active');
+                compareModeBtn.classList.remove('active');
+                compareResultsDisplay.classList.add('hidden'); // Hide compare results when switching
+            } else {
+                singleArticleSection.classList.add('hidden');
+                compareArticlesSection.classList.remove('hidden');
+                singleModeBtn.classList.remove('active');
+                compareModeBtn.classList.add('active');
+                singleResultsDisplay.classList.add('hidden'); // Hide single results when switching
+            }
+            // Clear previous results and errors when switching modes
+            clearResults();
+            hideError();
+        }
+
+        // Event listeners for mode toggle buttons
+        singleModeBtn.addEventListener('click', () => setMode('single'));
+        compareModeBtn.addEventListener('click', () => setMode('compare'));
+
+        // Function to clear all result displays
+        function clearResults() {
+            singleResultsDisplay.classList.add('hidden');
+            compareResultsDisplay.classList.add('hidden');
+
+            // Clear single article elements
+            document.getElementById('overallSummary').innerHTML = '';
+            document.getElementById('extractedText').innerHTML = '';
+            document.getElementById('patternsList').innerHTML = '';
+            document.getElementById('originalHtmlIframe').srcdoc = '';
+
+            // Clear compare article elements
+            document.getElementById('overallSummary1').innerHTML = '';
+            document.getElementById('extractedText1').innerHTML = '';
+            document.getElementById('patternsList1').innerHTML = '';
+            document.getElementById('overallSummary2').innerHTML = '';
+            document.getElementById('extractedText2').innerHTML = '';
+            document.getElementById('patternsList2').innerHTML = '';
+        }
+
+        // Function to show error message
+        function showError(message) {
+            errorMessageDiv.textContent = message;
+            errorMessageDiv.classList.remove('hidden');
+        }
+
+        // Function to hide error message
+        function hideError() {
+            errorMessageDiv.classList.add('hidden');
+            errorMessageDiv.textContent = '';
+        }
+
+        // Function to display overall summary
+        function displayOverallSummary(summaryData, targetElementId) {
+            const overallSummaryDiv = document.getElementById(targetElementId);
+            if (!summaryData) {
+                overallSummaryDiv.innerHTML = '<p class="text-gray-600">No overall analysis available.</p>';
+                return;
+            }
+
+            let summaryHtml = `
+                <h4 class="text-lg font-bold mb-2">Overall Sentiment:
+                    <span class="overall-sentiment sentiment-${summaryData.overall_sentiment.toLowerCase().replace(' ', '-')}"
+                    >${summaryData.overall_sentiment}</span>
+                </h4>
+                <p class="text-gray-700 mb-1"><strong>Confidence:</strong> ${summaryData.overall_confidence}</p>
+                <p class="text-gray-700 mb-1"><strong>Tone:</strong> ${summaryData.overall_tone}</p>
+                <p class="text-gray-700 mb-2"><strong>Theme:</strong> ${summaryData.theme}</p>
+            `;
+
+            if (summaryData.overall_summary && summaryData.overall_summary.length > 0) {
+                summaryHtml += '<h4 class="text-lg font-bold mb-2">Summary Points:</h4><ul>';
+                summaryData.overall_summary.forEach(point => {
+                    summaryHtml += `<li>${point}</li>`;
+                });
+                summaryHtml += '</ul>';
+            } else {
+                summaryHtml += '<p class="text-gray-600">No specific summary points provided.</p>';
+            }
+            overallSummaryDiv.innerHTML = summaryHtml;
+        }
+
+        // Function to display patterns list
+        function displayPatterns(patterns, targetListId) {
+            const patternsList = document.getElementById(targetListId);
+            patternsList.innerHTML = ''; // Clear previous patterns
+
+            if (patterns && patterns.length > 0) {
+                patterns.forEach(pattern => {
+                    const patternItem = document.createElement('li');
+                    patternItem.className = 'pattern-item';
+                    patternItem.innerHTML = `
+                        <h4>${pattern.pattern_type}</h4>
+                        <p><strong>Segment:</strong> "${pattern.text_segment}"</p>
+                        <p><strong>Explanation:</strong> ${pattern.explanation}</p>
+                        <p><strong>Confidence:</strong> ${pattern.confidence_score}</p>
+                        <span class="severity severity-${pattern.severity.toLowerCase().replace(' ', '-')}">${pattern.severity}</span>
+                        ${pattern.trusted_sources_suggestions && pattern.trusted_sources_suggestions.length > 0 ?
+                            `<p class="mt-2"><strong>Suggested Sources:</strong></p>
+                            <ul class="list-disc ml-5 text-sm">
+                                ${pattern.trusted_sources_suggestions.map(source => `<li><a href="${source.url}" target="_blank" class="text-blue-600 hover:underline">${source.name}</a></li>`).join('')}
+                            </ul>`
+                            : `<p class="mt-2 text-gray-500 text-sm">No specific source suggestions.</p>`
+                        }
+                    `;
+                    patternsList.appendChild(patternItem);
+                });
+            } else {
+                patternsList.innerHTML = '<p class="text-gray-600">No significant misinformation patterns detected.</p>';
+            }
+        }
+
+        // Main function to handle and display results for a single article
+        function displaySingleArticleResults(data) {
+            clearResults(); // Clear any previous results
+            singleResultsDisplay.classList.remove('hidden');
+
+            displayOverallSummary(data, 'overallSummary');
+            document.getElementById('extractedText').innerHTML = data.highlighted_text;
+            displayPatterns(data.patterns, 'patternsList');
+
+            const originalHtmlIframe = document.getElementById('originalHtmlIframe');
+            if (data.original_html_content && data.original_url !== "Direct Text Input") {
+                originalHtmlIframe.srcdoc = data.original_html_content;
+            } else {
+                originalHtmlIframe.srcdoc = '<p class="text-gray-500 p-4">Original page content not available for direct text input or could not be fetched.</p>';
+            }
+        }
+
+        // Main function to handle and display results for two articles in compare mode
+        function displayCompareResults(data) {
+            clearResults(); // Clear any previous results
+            compareResultsDisplay.classList.remove('hidden');
+
+            // Article 1
+            if (data.article1) {
+                displayOverallSummary(data.article1, 'overallSummary1');
+                document.getElementById('extractedText1').innerHTML = data.article1.highlighted_text;
+                displayPatterns(data.article1.patterns, 'patternsList1');
+            } else {
+                document.getElementById('overallSummary1').innerHTML = '<p class="text-red-500">Error analyzing Article 1: ' + (data.error1 || 'No data.') + '</p>';
+                document.getElementById('extractedText1').innerHTML = '<p class="text-gray-500">No text to display for Article 1.</p>';
+                document.getElementById('patternsList1').innerHTML = '<p class="text-gray-500">No patterns to display for Article 1.</p>';
+            }
+
+            // Article 2
+            if (data.article2) {
+                displayOverallSummary(data.article2, 'overallSummary2');
+                document.getElementById('extractedText2').innerHTML = data.article2.highlighted_text;
+                displayPatterns(data.article2.patterns, 'patternsList2');
+            } else {
+                document.getElementById('overallSummary2').innerHTML = '<p class="text-red-500">Error analyzing Article 2: ' + (data.error2 || 'No data.') + '</p>';
+                document.getElementById('extractedText2').innerHTML = '<p class="text-gray-500">No text to display for Article 2.</p>';
+                document.getElementById('patternsList2').innerHTML = '<p class="text-gray-500">No patterns to display for Article 2.</p>';
+            }
+        }
+
+
+        // Handle single article form submission
+        analysisForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideError();
+            clearResults();
+            loadingIndicator.classList.add('active');
+
+            const formData = new FormData(analysisForm);
+            const articleUrl = formData.get('article_url').trim();
+            const articleText = formData.get('article_text').trim();
+
+            if (!articleUrl && !articleText) {
+                showError("Please enter a URL or paste article text for analysis.");
+                loadingIndicator.classList.remove('active');
+                return;
+            }
+
+            try {
+                // In a real application, you'd send this to your backend server
+                // For demonstration, we'll simulate a successful response
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    showError(data.error || 'An unknown error occurred during analysis.');
+                } else {
+                    displaySingleArticleResults(data);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('An error occurred while connecting to the server. Please try again.');
+            } finally {
+                loadingIndicator.classList.remove('active');
+            }
+        });
+
+        // Handle compare articles form submission
+        compareForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideError();
+            clearResults();
+            loadingIndicator.classList.add('active');
+
+            const formData = new FormData(compareForm);
+            const article1Url = formData.get('article1_url').trim();
+            const article1Text = formData.get('article1_text').trim();
+            const article2Url = formData.get('article2_url').trim();
+            const article2Text = formData.get('article2_text').trim();
+
+            if ((!article1Url && !article1Text) || (!article2Url && !article2Text)) {
+                showError("Please provide both a URL or text for Article 1 AND Article 2 to compare.");
+                loadingIndicator.classList.remove('active');
+                return;
+            }
+
+            try {
+                // In a real application, you'd send this to your backend server
+                // For demonstration, we'll simulate a successful response
+                const response = await fetch('/compare', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                // Check for overall errors from the server or individual article errors
+                if (data.error1 || data.error2) {
+                    let combinedError = "Comparison failed: ";
+                    if (data.error1) combinedError += `Article 1 Error: ${data.error1}. `;
+                    if (data.error2) combinedError += `Article 2 Error: ${data.error2}. `;
+                    showError(combinedError);
+                } else if (!response.ok) {
+                    showError(data.error || 'An unknown error occurred during comparison.');
+                } else {
+                    displayCompareResults(data);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('An error occurred while connecting to the server. Please try again.');
+            } finally {
+                loadingIndicator.classList.remove('active');
+            }
+        });
+
+        // Initialize mode on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            setMode('single');
+        });
+
+    </script>
+</body>
+</html>
